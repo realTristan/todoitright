@@ -2,12 +2,14 @@
 
 import { ObjectState } from "@/app/lib/state";
 import { Task, User } from "@/app/lib/types";
-import { deleteTask, updateTask } from "@/app/utils/api";
+import { deleteTask } from "@/app/utils/api";
 import { setTaskToCompleted } from "@/app/utils/api";
 
-import { useState } from "react";
+import TaskInput from "@/app/components/MainTasks/TaskInput";
 import { CheckmarkSVG } from "@/app/components/Svgs";
-import { LoadingRelative } from "../Loading";
+import { LoadingRelative } from "@/app/components/Loading";
+
+import { useState } from "react";
 
 interface TaskButtonProps {
   user: User;
@@ -18,48 +20,15 @@ interface TaskButtonProps {
 export default function TaskButton(props: TaskButtonProps): JSX.Element {
   const [editing, setEditing] = useState(false);
   const [confirm, setConfirm] = useState(false);
-  const [value, setValue] = useState(props.task.value);
-  const [disabled, setDisabled] = useState(false);
 
   return (
     <div className="group relative flex flex-col">
-      <textarea
-        disabled={disabled}
-        onFocus={() => setEditing(true)}
-        onBlur={async () => {
-          setEditing(false);
-
-          if (value === props.task.value) {
-            return;
-          }
-
-          setDisabled(true);
-          let success: boolean = await updateTask(
-            props.user,
-            props.task.id,
-            value,
-          );
-          setDisabled(false);
-
-          if (!success) return;
-
-          const oldTask = props.task; // store the old task
-          const newTask = { ...props.task, value }; // just update the value
-
-          // replace the old task with the new task
-          const newTasks = props.tasks.value.map((task) => {
-            if (task.id === oldTask.id) {
-              return newTask;
-            }
-            return task;
-          });
-          props.tasks.set(newTasks);
-        }}
-        defaultValue={props.task.value}
-        onChange={(e) => setValue(e.target.value)}
-        id={props.task.id.toString()}
-        className="flex h-full w-full flex-col items-center justify-center rounded-md border-2 border-gray-100 bg-white px-14 py-3 text-center hover:bg-gray-50 disabled:opacity-50"
-      ></textarea>
+      <TaskInput
+        setEditing={setEditing}
+        task={props.task}
+        user={props.user}
+        tasks={props.tasks}
+      />
 
       {!editing && !confirm && (
         <div className="mt-2 flex flex-row gap-2">
@@ -72,6 +41,7 @@ export default function TaskButton(props: TaskButtonProps): JSX.Element {
           <DeleteButton onClick={() => setConfirm(true)} />
         </div>
       )}
+
       {!editing && confirm && (
         <div className="mt-2 flex flex-row gap-2">
           <ConfirmButton
