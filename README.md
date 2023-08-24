@@ -15,11 +15,9 @@
 - [X] Delete task
 - [X] Complete a task
 - [X] Edit a task
+- [X] Tasks for each user
 
 - [ ] Loading Component when interacting with the backend
-- [ ] Tasks for each user
-- [ ] Create new list
-- [ ] Delete list
 
 # Terminal Commands
 Migration: npx prisma migrate dev --name init
