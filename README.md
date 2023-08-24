@@ -17,6 +17,9 @@
 - [X] Edit a task
 - [X] Tasks for each user
 
+# Lines of code
+<img width="342" alt="Screenshot 2023-08-24 at 10 23 48 AM" src="https://github.com/realTristan/todoitright/assets/75189508/1b5a4911-e761-4738-be7c-2ae833b5f5ed">
+
 # Terminal Commands
 Migration: npx prisma migrate dev --name init
 
