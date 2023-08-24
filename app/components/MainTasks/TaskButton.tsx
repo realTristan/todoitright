@@ -7,7 +7,7 @@ import { setTaskToCompleted } from "@/app/utils/api";
 
 import { useState } from "react";
 import { CheckmarkSVG } from "@/app/components/Svgs";
-import { LoadingRelative } from "./Loading";
+import { LoadingRelative } from "../Loading";
 
 interface TaskButtonProps {
   user: User;

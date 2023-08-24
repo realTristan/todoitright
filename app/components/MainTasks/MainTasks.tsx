@@ -1,9 +1,9 @@
 import { User, Task } from "@/app/lib/types";
 import { ObjectState } from "@/app/lib/state";
 
-import CreateTaskButton from "@/app/components/CreateTaskButton";
-import TaskButton from "@/app/components/TaskButton";
-import { MAX_TASKS } from "../lib/constants";
+import CreateTaskButton from "@/app/components/MainTasks/CreateTaskButton";
+import TaskButton from "@/app/components/MainTasks/TaskButton";
+import { MAX_TASKS } from "../../lib/constants";
 
 interface MainTasksProps {
   user: User;
@@ -14,7 +14,7 @@ export default function MainTasks(props: MainTasksProps) {
   return (
     <div className="mb-8 flex flex-col rounded-md border-2 border-dotted p-10">
       <h2 className="mb-4 text-2xl font-bold">
-        Tasks
+        Tasks{" "}
         <mark className="bg-transparent font-normal">
           ({props.main.value.length}/{MAX_TASKS})
         </mark>

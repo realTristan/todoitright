@@ -5,7 +5,7 @@ import { ObjectState } from "@/app/lib/state";
 
 import LoadingCenter from "@/app/components/Loading";
 import CompletedTasks from "@/app/components/CompletedTasks";
-import MainTasks from "@/app/components/MainTasks";
+import MainTasks from "@/app/components/MainTasks/MainTasks";
 import SideMenu from "@/app/components/SideMenu";
 import { SessionProvider } from "@/app/components/Providers";
 
