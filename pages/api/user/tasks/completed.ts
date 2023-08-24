@@ -23,10 +23,6 @@ export default async function handler(
     return res.status(400).json({ message: "Unauthorized" });
   }
 
-  if (!Prisma.isValidAccessToken(email, accessToken)) {
-    return res.status(400).json({ message: "Unauthorized" });
-  }
-
   switch (req.method) {
     case "GET":
       return handleGet(res, accessToken);
@@ -52,7 +48,14 @@ const handlePost = async (
     return res.status(400).json({ message: "Invalid body" });
   }
 
-  const idNumber: number = parseInt(task_id as string);
-  const task = await Prisma.setTaskToCompleted(idNumber, accessToken);
-  res.status(200).json(task);
+  // If we've reached max completed tasks
+  const maxReached: boolean =
+    await Prisma.hasReachedMaxCompletedTasks(accessToken);
+  if (maxReached) {
+    return res.status(400).json({ message: "Maximum completed tasks reached" });
+  }
+
+  const taskId: number = parseInt(task_id as string);
+  const task = await Prisma.setTaskToCompleted(taskId, accessToken);
+  res.status(200).json({ message: "Success", result: task });
 };

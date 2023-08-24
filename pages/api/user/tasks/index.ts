@@ -26,10 +26,6 @@ export default async function handler(
     return res.status(400).json({ message: "Unauthorized" });
   }
 
-  if (!Prisma.isValidAccessToken(email, accessToken)) {
-    return res.status(400).json({ message: "Unauthorized" });
-  }
-
   switch (req.method) {
     case "GET":
       return handleGet({ req, res, accessToken });
@@ -40,7 +36,9 @@ export default async function handler(
     case "DELETE":
       return handleDelete({ req, res, accessToken });
     default:
-      return res.status(405).end(`Method ${req.method} Not Allowed`);
+      return res
+        .status(405)
+        .end({ message: `Method ${req.method} Not Allowed` });
   }
 }
 
@@ -61,7 +59,7 @@ interface HandlerParams {
 const handleGet = async ({ res, accessToken }: HandlerParams) => {
   const tasks = await Prisma.getTasks(accessToken);
 
-  res.status(200).json(tasks);
+  res.status(200).json({ message: "Success", result: tasks });
 };
 
 /**
@@ -70,9 +68,13 @@ const handleGet = async ({ res, accessToken }: HandlerParams) => {
  * @returns Promise<void>
  */
 const handlePost = async ({ res, accessToken }: HandlerParams) => {
-  const task = await Prisma.createTask(accessToken);
+  const maxReached: boolean = await Prisma.hasReachedMaxTasks(accessToken);
+  if (maxReached) {
+    return res.status(400).json({ message: "Maximum tasks reached" });
+  }
 
-  res.status(200).json(task);
+  const task = await Prisma.createTask(accessToken);
+  res.status(200).json({ message: "Success", result: task });
 };
 
 /**
@@ -89,7 +91,7 @@ const handlePut = async ({ req, res, accessToken }: HandlerParams) => {
   const taskId: number = parseInt(task_id as string);
   const task = await Prisma.updateTask(taskId, value, accessToken);
 
-  res.status(200).json(task);
+  res.status(200).json({ message: "Success", result: task });
 };
 
 /**
@@ -106,5 +108,5 @@ const handleDelete = async ({ req, res, accessToken }: HandlerParams) => {
   const taskId: number = parseInt(task_id as string);
   const task = await Prisma.deleteTask(taskId, accessToken);
 
-  res.status(200).json(task);
+  res.status(200).json({ message: "Success", result: task });
 };

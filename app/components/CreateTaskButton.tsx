@@ -18,8 +18,8 @@ export default function CreateTaskButton(
         let res: Response = await createTask(props.user);
         if (!res.ok) return;
 
-        let json: Task = await res.json();
-        props.tasks.set([...props.tasks.value, json]);
+        let json = await res.json();
+        props.tasks.set([...props.tasks.value, json.result]);
       }}
       className="flex h-36 w-36 flex-col items-center justify-center rounded-md border-2 border-gray-100 bg-white px-10 py-3 hover:bg-gray-50"
     >

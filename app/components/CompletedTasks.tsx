@@ -6,6 +6,7 @@ import { Task, User } from "@/app/lib/types";
 import { ObjectState } from "@/app/lib/state";
 import { CrossSVG } from "@/app/components/Svgs";
 import { deleteTask } from "@/app/utils/api";
+import { MAX_COMPLETED_TASKS } from "../lib/constants";
 
 interface CompletedProps {
   user: User;
@@ -17,7 +18,7 @@ export default function CompletedTasks(props: CompletedProps): JSX.Element {
       <h2 className="mb-4 text-2xl font-bold">
         Completed{" "}
         <mark className="bg-transparent font-normal">
-          ({props.completed.value.length})
+          ({props.completed.value.length}/{MAX_COMPLETED_TASKS})
         </mark>
       </h2>
       <ul className="flex flex-wrap gap-6">

@@ -36,10 +36,10 @@ const Wrapped = (): JSX.Element => {
 
     if (status === "authenticated") {
       getMainTasks(session.user).then((res: Response) => {
-        if (res.ok) res.json().then((json) => main.set(json));
+        if (res.ok) res.json().then((json) => main.set(json.result));
       });
       getCompletedTasks(session.user).then((res: Response) => {
-        if (res.ok) res.json().then((json) => main.set(json));
+        if (res.ok) res.json().then((json) => main.set(json.result));
       });
     }
   }, [status]);

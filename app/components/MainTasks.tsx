@@ -3,6 +3,7 @@ import { ObjectState } from "@/app/lib/state";
 
 import CreateTaskButton from "@/app/components/CreateTaskButton";
 import TaskButton from "@/app/components/TaskButton";
+import { MAX_TASKS } from "../lib/constants";
 
 interface MainTasksProps {
   user: User;
@@ -15,7 +16,7 @@ export default function MainTasks(props: MainTasksProps) {
       <h2 className="mb-4 text-2xl font-bold">
         Tasks
         <mark className="bg-transparent font-normal">
-          ({props.main.value.length})
+          ({props.main.value.length}/{MAX_TASKS})
         </mark>
       </h2>
       <ul className="flex flex-wrap gap-6">

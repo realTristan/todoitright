@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
-import { Task, User } from "./types";
+import { Task } from "./types";
+import { MAX_COMPLETED_TASKS, MAX_TASKS } from "./constants";
 
 export class Prisma extends PrismaClient {
   constructor() {
@@ -78,22 +79,6 @@ export class Prisma extends PrismaClient {
   ): Promise<T> => {
     const global = globalThis as any;
     return await global.prisma[table].delete({ where });
-  };
-
-  /**
-   * Verifies that an access token is valid for a user
-   * @param email The email of the user to verify the access token for
-   * @param accessToken The access token to verify
-   * @returns Whether or not the access token is valid for the user
-   */
-  public static readonly isValidAccessToken = async (
-    email: string,
-    accessToken: string,
-  ): Promise<boolean> => {
-    const user: User | null = await Prisma.findOne("User", { email });
-    if (!user) return false;
-
-    return user.accessToken === accessToken;
   };
 
   /**
@@ -191,6 +176,30 @@ export class Prisma extends PrismaClient {
       userAccessToken: accessToken,
       completed: false,
     });
+  };
+
+  /**
+   * Get whether or not we've reached the max amount of tasks
+   * @param accessToken The access token of the user
+   * @returns Whether we've reached the maximum amount of tasks
+   */
+  public static readonly hasReachedMaxTasks = async (
+    accessToken: string,
+  ): Promise<boolean> => {
+    const tasks: Task[] = await Prisma.getTasks(accessToken);
+    return tasks.length > MAX_TASKS;
+  };
+
+  /**
+   * Get whether or not we've reached the max amount of completed tasks
+   * @param accessToken The access token of the user
+   * @returns Whether we've reached the maximum amount of completed tasks
+   */
+  public static readonly hasReachedMaxCompletedTasks = async (
+    accessToken: string,
+  ): Promise<boolean> => {
+    const tasks: Task[] = await Prisma.getCompletedTasks(accessToken);
+    return tasks.length > MAX_COMPLETED_TASKS;
   };
 }
 

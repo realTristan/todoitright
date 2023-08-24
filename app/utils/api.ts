@@ -58,7 +58,17 @@ export const updateTask = async (
   return await fetchWithAuthorization(user, TASKS_ENDPOINT, {
     method: "POST",
     body: JSON.stringify({ task_id, value }),
-  }).then((res) => res.ok);
+  }).then((res: Response) => res.ok);
+};
+
+export const setTaskToCompleted = async (
+  user: User,
+  task_id: number,
+): Promise<boolean> => {
+  return await fetchWithAuthorization(user, COMPLETED_TASKS_ENDPOINT, {
+    method: "POST",
+    body: JSON.stringify({ task_id }),
+  }).then((res: Response) => res.ok);
 };
 
 /**

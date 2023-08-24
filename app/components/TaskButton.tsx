@@ -3,10 +3,10 @@
 import { ObjectState } from "@/app/lib/state";
 import { Task, User } from "@/app/lib/types";
 import { deleteTask, updateTask } from "@/app/utils/api";
+import { setTaskToCompleted } from "@/app/utils/api";
 
 import { useState } from "react";
 import { CheckmarkSVG } from "@/app/components/Svgs";
-import { generateAuthorization } from "../lib/auth";
 
 interface TaskButtonProps {
   user: User;
@@ -163,23 +163,4 @@ const CompleteButton = (props: CompleteButtonProps): JSX.Element => {
       <CheckmarkSVG />
     </button>
   );
-};
-
-const setTaskToCompleted = async (
-  user: User,
-  task_id: number,
-): Promise<boolean> => {
-  const authorization = await generateAuthorization(
-    user.accessToken,
-    user.email,
-  );
-
-  return await fetch("/api/user/tasks/completed", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      authorization,
-    },
-    body: JSON.stringify({ task_id }),
-  }).then((res) => res.ok);
 };
