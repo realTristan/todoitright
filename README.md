@@ -7,7 +7,7 @@
 - [X] Tailwindcss
 - [X] Google Login
 - [X] Supabase with Prisma (Postgres)
-- [ ] Vercel
+- [X] Vercel
 
 # Stuff
 - [X] Login / Logout
