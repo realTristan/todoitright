@@ -1,6 +1,9 @@
 # todoitright ![Stars](https://img.shields.io/github/stars/realTristan/todoitright?color=brightgreen) ![Watchers](https://img.shields.io/github/watchers/realTristan/todoitright?label=Watchers)
 <img width="1033" alt="Screenshot 2023-08-24 at 10 07 28 AM" src="https://github.com/realTristan/todoitright/assets/75189508/c71ee101-047d-4752-bdf8-cced50e9e5a7">
 
+# Synopsis
+A simple todo app built with Nextjs, Typescript, Tailwindcss, Google Login, Supabase with Prisma (Postgres) and Vercel. I wanted to build a simple todo app to learn more about Supabase and Prisma, as well as how to use it in NextJS and deploy it to Vercel.
+
 # Stack
 - [X] Nextjs (React)
 - [X] Typescript
