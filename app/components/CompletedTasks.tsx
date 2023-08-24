@@ -57,7 +57,7 @@ const CompletedTask = (props: CompletedTaskProps): JSX.Element => {
           if (!success) return;
 
           // remove the task from the list
-          const newTasks = props.completed.value.filter(
+          const newTasks: Task[] = props.completed.value.filter(
             (task) => task.id !== props.task.id,
           );
           props.completed.set(newTasks);

@@ -27,7 +27,7 @@ export default function CreateTaskButton(
 
         if (!res.ok) return;
 
-        let json = await res.json();
+        let json: any = await res.json();
         props.tasks.set([...props.tasks.value, json.result]);
       }}
       className="flex h-36 w-36 flex-col items-center justify-center rounded-md border-2 border-gray-100 bg-white px-10 py-3 hover:bg-gray-50 disabled:opacity-50"

@@ -142,7 +142,7 @@ const CompleteButton = (props: CompleteButtonProps): JSX.Element => {
         props.completed.set([...props.completed.value, props.task]);
 
         // remove the task from the main tasks
-        const newTasks = props.tasks.value.filter(
+        const newTasks: Task[] = props.tasks.value.filter(
           (task) => task.id !== props.task.id,
         );
         props.tasks.set(newTasks);

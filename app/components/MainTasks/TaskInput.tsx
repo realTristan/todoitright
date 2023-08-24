@@ -38,14 +38,13 @@ export default function TaskInput(props: TaskInputProps): JSX.Element {
 
         if (!success) return;
 
-        const oldTask = props.task; // store the old task
-        const newTask = { ...props.task, value }; // just update the value
+        const oldTask: Task = props.task; // store the old task
+        const newTask: Task = { ...props.task, value }; // just update the value
 
         // replace the old task with the new task
-        const newTasks = props.tasks.value.map((task) => {
-          if (task.id === oldTask.id) {
-            return newTask;
-          }
+        const newTasks: Task[] = props.tasks.value.map((task) => {
+          if (task.id === oldTask.id) return newTask;
+
           return task;
         });
         props.tasks.set(newTasks);
