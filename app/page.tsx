@@ -35,12 +35,16 @@ const Wrapped = (): JSX.Element => {
     }
 
     if (status === "authenticated") {
-      getMainTasks(session.user).then((res: Response) => {
-        if (res.ok) res.json().then((json) => main.set(json.result));
-      });
-      getCompletedTasks(session.user).then((res: Response) => {
-        if (res.ok) res.json().then((json) => main.set(json.result));
-      });
+      if (!main.updated) {
+        getMainTasks(session.user).then((res: Response) => {
+          if (res.ok) res.json().then((json) => main.set(json.result));
+        });
+      }
+      if (!completed.updated) {
+        getCompletedTasks(session.user).then((res: Response) => {
+          if (res.ok) res.json().then((json) => completed.set(json.result));
+        });
+      }
     }
   }, [status]);
 

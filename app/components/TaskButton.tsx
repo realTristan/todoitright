@@ -150,10 +150,10 @@ const CompleteButton = (props: CompleteButtonProps): JSX.Element => {
         );
         if (!success) return;
 
-        // add the task to the completed list
+        // add the task to the completed tasks
         props.completed.set([...props.completed.value, props.task]);
 
-        // remove the task from the main list
+        // remove the task from the main tasks
         const newTasks = props.tasks.value.filter(
           (task) => task.id !== props.task.id,
         );

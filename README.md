@@ -16,7 +16,6 @@
 - [X] Complete a task
 - [X] Edit a task
 - [X] Tasks for each user
-
 - [ ] Loading Component when interacting with the backend
 
 # Terminal Commands

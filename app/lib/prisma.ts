@@ -82,11 +82,11 @@ export class Prisma extends PrismaClient {
   };
 
   /**
-   * Updates a task in the provided list
+   * Updates a task
    * @param id The id of the old task to update
    * @param value The new value of the task
    * @param userAccessToken The access token of the user to update the task for
-   * @returns The updated list
+   * @returns The updated task
    */
   public static readonly updateTask = async (
     id: number,
@@ -103,9 +103,9 @@ export class Prisma extends PrismaClient {
   };
 
   /**
-   * Removes a task from the provided list
+   * Creates a new task
    * @param userAccessToken The access token of the user to remove the task from
-   * @returns The updated list
+   * @returns The created task
    */
   public static readonly createTask = async (
     userAccessToken: string,
@@ -134,10 +134,10 @@ export class Prisma extends PrismaClient {
   };
 
   /**
-   * Creates a list
-   * @param id The id of the list to create
-   * @param userAccessToken The access token of the user to create the list for
-   * @returns The created list
+   * Sets a task to completed
+   * @param id The id of the task to set to completed
+   * @param userAccessToken The access token of the user to set the task to completed for
+   * @returns The completed task
    */
   public static readonly setTaskToCompleted = async (
     id: number,
@@ -187,7 +187,7 @@ export class Prisma extends PrismaClient {
     accessToken: string,
   ): Promise<boolean> => {
     const tasks: Task[] = await Prisma.getTasks(accessToken);
-    return tasks.length > MAX_TASKS;
+    return tasks.length >= MAX_TASKS;
   };
 
   /**
@@ -199,7 +199,7 @@ export class Prisma extends PrismaClient {
     accessToken: string,
   ): Promise<boolean> => {
     const tasks: Task[] = await Prisma.getCompletedTasks(accessToken);
-    return tasks.length > MAX_COMPLETED_TASKS;
+    return tasks.length >= MAX_COMPLETED_TASKS;
   };
 }
 

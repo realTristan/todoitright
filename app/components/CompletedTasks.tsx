@@ -51,10 +51,10 @@ const CompletedTask = (props: CompletedTaskProps): JSX.Element => {
           if (!success) return;
 
           // remove the task from the list
-          const newList = props.completed.value.filter(
+          const newTasks = props.completed.value.filter(
             (task) => task.id !== props.task.id,
           );
-          props.completed.set(newList);
+          props.completed.set(newTasks);
         }}
         className="flex h-full w-full flex-col items-center justify-center rounded-md border-2 border-gray-100 bg-white px-14 py-3 text-center hover:bg-gray-50"
       >

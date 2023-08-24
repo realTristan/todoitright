@@ -26,7 +26,7 @@ export const deleteTask = async (
   user: User,
   task_id: number,
 ): Promise<boolean> => {
-  return await fetchWithAuthorization(user, "/api/user/task", {
+  return await fetchWithAuthorization(user, TASKS_ENDPOINT, {
     method: "DELETE",
     body: JSON.stringify({ task_id }),
   }).then((res: Response) => res.ok);

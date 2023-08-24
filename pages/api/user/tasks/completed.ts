@@ -33,11 +33,21 @@ export default async function handler(
   }
 }
 
+/**
+ * Gets the completed tasks for a user
+ * @param res, accessToken
+ * @returns Promise<void>
+ */
 const handleGet = async (res: NextApiResponse, accessToken: string) => {
-  const lists = await Prisma.getCompletedTasks(accessToken);
-  res.status(200).json(lists);
+  const tasks = await Prisma.getCompletedTasks(accessToken);
+  res.status(200).json({ message: "Success", result: tasks });
 };
 
+/**
+ * Sets a task to completed
+ * @param req, res, accessToken
+ * @returns Promise<void>
+ */
 const handlePost = async (
   req: NextApiRequest,
   res: NextApiResponse,
