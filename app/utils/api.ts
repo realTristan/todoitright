@@ -56,7 +56,7 @@ export const updateTask = async (
   value: string,
 ): Promise<boolean> => {
   return await fetchWithAuthorization(user, TASKS_ENDPOINT, {
-    method: "POST",
+    method: "PUT",
     body: JSON.stringify({ task_id, value }),
   }).then((res: Response) => res.ok);
 };

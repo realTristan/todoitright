@@ -14,9 +14,9 @@ export class Prisma extends PrismaClient {
    * @param table The table to get
    * @returns The table
    */
-  public static readonly getTable = async (name: string) => {
+  public static readonly getTable = (table: string) => {
     const global = globalThis as any;
-    return global.prisma[name];
+    return global.prisma[table];
   };
 
   /**
@@ -29,7 +29,7 @@ export class Prisma extends PrismaClient {
     table: string,
     where: any,
   ): Promise<T[]> => {
-    const tableRef: any = await Prisma.getTable(table);
+    const tableRef: any = Prisma.getTable(table);
     return await tableRef.findMany({ where });
   };
 
@@ -43,7 +43,7 @@ export class Prisma extends PrismaClient {
     table: string,
     where: any,
   ): Promise<T | null> => {
-    const tableRef: any = await Prisma.getTable(table);
+    const tableRef: any = Prisma.getTable(table);
     return await tableRef.findFirst({ where });
   };
 
@@ -57,7 +57,7 @@ export class Prisma extends PrismaClient {
     table: string,
     data: any,
   ): Promise<T> => {
-    const tableRef: any = await Prisma.getTable(table);
+    const tableRef: any = Prisma.getTable(table);
     return await tableRef.create({ data });
   };
 
@@ -73,7 +73,7 @@ export class Prisma extends PrismaClient {
     where: any,
     data: any,
   ): Promise<T> => {
-    const tableRef: any = await Prisma.getTable(table);
+    const tableRef: any = Prisma.getTable(table);
     return await tableRef.update({ where, data });
   };
 
@@ -87,7 +87,7 @@ export class Prisma extends PrismaClient {
     table: string,
     where: any,
   ): Promise<T> => {
-    const tableRef: any = await Prisma.getTable(table);
+    const tableRef: any = Prisma.getTable(table);
     return await tableRef.delete({ where });
   };
 
