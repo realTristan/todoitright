@@ -1,5 +1,5 @@
 # todoitright
-<img width="1065" alt="Screenshot 2023-08-23 at 11 43 22 PM" src="https://github.com/realTristan/todoitright/assets/75189508/9392fbc0-8bf7-4307-a69f-b3feeced2382">
+<img width="1033" alt="Screenshot 2023-08-24 at 10 07 28 AM" src="https://github.com/realTristan/todoitright/assets/75189508/c71ee101-047d-4752-bdf8-cced50e9e5a7">
 
 # Stack
 - [X] Nextjs (React)
