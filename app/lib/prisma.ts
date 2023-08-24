@@ -10,6 +10,16 @@ export class Prisma extends PrismaClient {
   }
 
   /**
+   * Get a table
+   * @param table The table to get
+   * @returns The table
+   */
+  public static readonly getTable = async (name: string) => {
+    const global = globalThis as any;
+    return global.prisma[name];
+  };
+
+  /**
    * Finds many rows in a table
    * @param table The table to find in
    * @param where The where clause to find
@@ -19,8 +29,8 @@ export class Prisma extends PrismaClient {
     table: string,
     where: any,
   ): Promise<T[]> => {
-    const global = globalThis as any;
-    return await global.prisma[table].findMany({ where });
+    const tableRef: any = await Prisma.getTable(table);
+    return await tableRef.findMany({ where });
   };
 
   /**
@@ -33,8 +43,8 @@ export class Prisma extends PrismaClient {
     table: string,
     where: any,
   ): Promise<T | null> => {
-    const global = globalThis as any;
-    return await global.prisma[table].findFirst({ where });
+    const tableRef: any = await Prisma.getTable(table);
+    return await tableRef.findFirst({ where });
   };
 
   /**
@@ -47,8 +57,8 @@ export class Prisma extends PrismaClient {
     table: string,
     data: any,
   ): Promise<T> => {
-    const global = globalThis as any;
-    return await global.prisma[table].create({ data });
+    const tableRef: any = await Prisma.getTable(table);
+    return await tableRef.create({ data });
   };
 
   /**
@@ -63,8 +73,8 @@ export class Prisma extends PrismaClient {
     where: any,
     data: any,
   ): Promise<T> => {
-    const global = globalThis as any;
-    return await global.prisma[table].update({ where, data });
+    const tableRef: any = await Prisma.getTable(table);
+    return await tableRef.update({ where, data });
   };
 
   /**
@@ -77,8 +87,8 @@ export class Prisma extends PrismaClient {
     table: string,
     where: any,
   ): Promise<T> => {
-    const global = globalThis as any;
-    return await global.prisma[table].delete({ where });
+    const tableRef: any = await Prisma.getTable(table);
+    return await tableRef.delete({ where });
   };
 
   /**
@@ -93,13 +103,14 @@ export class Prisma extends PrismaClient {
     value: string,
     userAccessToken: string,
   ): Promise<any> => {
-    const newTask: Task = { id, value };
-
-    return (await Prisma.update(
+    // Table, where to update the data, the data to update
+    const task: Task = await Prisma.update(
       "Task",
-      { id, userAccessToken },
-      newTask,
-    )) as Task;
+      { id, userAccessToken }, // Find the task with the id and access token
+      { value }, // Update the value of the task
+    );
+
+    return task;
   };
 
   /**
@@ -110,11 +121,13 @@ export class Prisma extends PrismaClient {
   public static readonly createTask = async (
     userAccessToken: string,
   ): Promise<Task> => {
-    return (await Prisma.create("Task", {
+    const task: Task = await Prisma.create("Task", {
       value: "What to do? eh?",
       userAccessToken,
       completed: false,
-    })) as Task;
+    });
+
+    return task;
   };
 
   /**
@@ -127,10 +140,12 @@ export class Prisma extends PrismaClient {
     id: number,
     userAccessToken: string,
   ): Promise<Task> => {
-    return (await Prisma.delete("Task", {
+    const task: Task = await Prisma.delete("Task", {
       id,
       userAccessToken,
-    })) as Task;
+    });
+
+    return task;
   };
 
   /**
@@ -143,11 +158,13 @@ export class Prisma extends PrismaClient {
     id: number,
     userAccessToken: string,
   ): Promise<Task> => {
-    return (await Prisma.update(
+    const task: Task = await Prisma.update(
       "Task",
       { id, userAccessToken },
       { completed: true },
-    )) as Task;
+    );
+
+    return task;
   };
 
   /**
@@ -158,10 +175,12 @@ export class Prisma extends PrismaClient {
   public static readonly getCompletedTasks = async (
     accessToken: string,
   ): Promise<Task[]> => {
-    return await Prisma.findMany("Task", {
+    const tasks: Task[] = await Prisma.findMany("Task", {
       userAccessToken: accessToken,
       completed: true,
     });
+
+    return tasks;
   };
 
   /**
@@ -172,10 +191,12 @@ export class Prisma extends PrismaClient {
   public static readonly getTasks = async (
     accessToken: string,
   ): Promise<Task[]> => {
-    return await Prisma.findMany("Task", {
+    const tasks: Task[] = await Prisma.findMany("Task", {
       userAccessToken: accessToken,
       completed: false,
     });
+
+    return tasks;
   };
 
   /**
