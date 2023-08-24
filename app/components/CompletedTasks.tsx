@@ -62,7 +62,7 @@ const CompletedTask = (props: CompletedTaskProps): JSX.Element => {
           );
           props.completed.set(newTasks);
         }}
-        className="flex h-full w-full flex-col items-center justify-center rounded-md border-2 border-gray-100 bg-white px-14 py-3 text-center hover:bg-gray-50"
+        className="flex h-full w-full flex-col items-center justify-center rounded-md border-2 border-gray-100 bg-white px-14 py-3 text-center hover:bg-gray-50 disabled:opacity-50"
       >
         {disabled ? <LoadingRelative className="h-5 w-5" /> : "Delete"}
       </button>
