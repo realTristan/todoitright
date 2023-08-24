@@ -1,4 +1,4 @@
-# todoitright
+# todoitright ![Stars](https://img.shields.io/github/stars/realTristan/todoitright?color=brightgreen) ![Watchers](https://img.shields.io/github/watchers/realTristan/todoitright?label=Watchers)
 <img width="1033" alt="Screenshot 2023-08-24 at 10 07 28 AM" src="https://github.com/realTristan/todoitright/assets/75189508/c71ee101-047d-4752-bdf8-cced50e9e5a7">
 
 # Stack
