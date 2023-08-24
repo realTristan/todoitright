@@ -1,5 +1,5 @@
 # todoitright
-Todo app
+<img width="1186" alt="Screenshot 2023-08-23 at 11 05 53 PM" src="https://github.com/realTristan/todoitright/assets/75189508/f93d816b-4960-4cf0-9f79-affecb11e72c">
 
 # Stack
 - [X] Nextjs (React)
