@@ -7,6 +7,7 @@ import { ObjectState } from "@/app/lib/state";
 import { CrossSVG } from "@/app/components/Svgs";
 import { deleteTask } from "@/app/utils/api";
 import { MAX_COMPLETED_TASKS } from "../lib/constants";
+import { LoadingRelative } from "./Loading";
 
 interface CompletedProps {
   user: User;
@@ -44,10 +45,15 @@ const CompletedTask = (props: CompletedTaskProps): JSX.Element => {
   const [confirm, setConfirm] = useState(false);
 
   const ConfirmButton = (): JSX.Element => {
+    const [disabled, setDisabled] = useState(false);
+
     return (
       <button
         onClick={async () => {
+          setDisabled(true);
           let success: boolean = await deleteTask(props.user, props.task.id);
+          setDisabled(false);
+
           if (!success) return;
 
           // remove the task from the list
@@ -58,7 +64,7 @@ const CompletedTask = (props: CompletedTaskProps): JSX.Element => {
         }}
         className="flex h-full w-full flex-col items-center justify-center rounded-md border-2 border-gray-100 bg-white px-14 py-3 text-center hover:bg-gray-50"
       >
-        Confirm
+        {disabled ? <LoadingRelative className="h-5 w-5" /> : "Delete"}
       </button>
     );
   };

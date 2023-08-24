@@ -21,15 +21,7 @@ export default NextAuth({
     }),
   ],
   callbacks: {
-    async jwt({ token, account }) {
-      if (account) {
-        token.id_token = account.id_token;
-        token.provider = account.provider;
-      }
-      return token;
-    },
-
-    async session({ session, token }) {
+    async session({ session }) {
       const bearerSecret: string | undefined = process.env.BEARER_SECRET;
 
       if (!bearerSecret) {

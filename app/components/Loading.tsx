@@ -1,5 +1,7 @@
 "use client";
 
+import { cn } from "@/app/utils/tailwind";
+
 /**
  * Loading Component
  * @returns JSX.Element
@@ -7,15 +9,15 @@
 export default function LoadingCenter(): JSX.Element {
   return (
     <section className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform">
-      <LoadingRelative />
+      <LoadingRelative className="h-20 w-20" />
     </section>
   );
 }
 
-export function LoadingRelative() {
+export function LoadingRelative(props: { className?: string }) {
   return (
     <svg
-      className="h-20 w-20 animate-spin text-white"
+      className={cn("animate-spin text-white", props.className)}
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"

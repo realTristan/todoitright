@@ -7,6 +7,7 @@ import { setTaskToCompleted } from "@/app/utils/api";
 
 import { useState } from "react";
 import { CheckmarkSVG } from "@/app/components/Svgs";
+import { LoadingRelative } from "./Loading";
 
 interface TaskButtonProps {
   user: User;
@@ -18,10 +19,12 @@ export default function TaskButton(props: TaskButtonProps): JSX.Element {
   const [editing, setEditing] = useState(false);
   const [confirm, setConfirm] = useState(false);
   const [value, setValue] = useState(props.task.value);
+  const [disabled, setDisabled] = useState(false);
 
   return (
     <div className="group relative flex flex-col">
       <textarea
+        disabled={disabled}
         onFocus={() => setEditing(true)}
         onBlur={async () => {
           setEditing(false);
@@ -30,11 +33,14 @@ export default function TaskButton(props: TaskButtonProps): JSX.Element {
             return;
           }
 
+          setDisabled(true);
           let success: boolean = await updateTask(
             props.user,
             props.task.id,
             value,
           );
+          setDisabled(false);
+
           if (!success) return;
 
           const oldTask = props.task; // store the old task
@@ -49,10 +55,10 @@ export default function TaskButton(props: TaskButtonProps): JSX.Element {
           });
           props.tasks.set(newTasks);
         }}
-        onChange={(e) => setValue(e.target.value)}
         defaultValue={props.task.value}
+        onChange={(e) => setValue(e.target.value)}
         id={props.task.id.toString()}
-        className="flex h-full w-full flex-col items-center justify-center rounded-md border-2 border-gray-100 bg-white px-14 py-3 text-center hover:bg-gray-50"
+        className="flex h-full w-full flex-col items-center justify-center rounded-md border-2 border-gray-100 bg-white px-14 py-3 text-center hover:bg-gray-50 disabled:opacity-50"
       ></textarea>
 
       {!editing && !confirm && (
@@ -101,7 +107,7 @@ const DeleteButton = (props: DeleteButtonProps): JSX.Element => {
   return (
     <button
       onClick={() => props.onClick()}
-      className="flex h-full w-full flex-col items-center justify-center rounded-md border-2 border-gray-100 bg-white px-14 py-3 text-center hover:bg-gray-50"
+      className="flex h-full w-full flex-col items-center justify-center rounded-md border-2 border-gray-100 bg-white px-14 py-3 text-center hover:bg-gray-50 disabled:opacity-50"
     >
       Delete
     </button>
@@ -114,10 +120,16 @@ interface ConfirmButtonProps {
   task: Task;
 }
 const ConfirmButton = (props: ConfirmButtonProps): JSX.Element => {
+  const [disabled, setDisabled] = useState(false);
+
   return (
     <button
+      disabled={disabled}
       onClick={async () => {
+        setDisabled(true);
         let success: boolean = await deleteTask(props.user, props.task.id);
+        setDisabled(false);
+
         if (!success) return;
 
         const newTasks: Task[] = props.tasks.value.filter(
@@ -126,9 +138,9 @@ const ConfirmButton = (props: ConfirmButtonProps): JSX.Element => {
 
         props.tasks.set(newTasks);
       }}
-      className="flex flex-col items-center justify-center rounded-md border-2 border-gray-100 bg-white px-10 py-3 hover:bg-gray-50"
+      className="flex flex-col items-center justify-center rounded-md border-2 border-gray-100 bg-white px-10 py-3 hover:bg-gray-50 disabled:opacity-50"
     >
-      Confirm
+      {disabled ? <LoadingRelative className="h-5 w-5" /> : "Confirm"}
     </button>
   );
 };
@@ -140,14 +152,20 @@ interface CompleteButtonProps {
   completed: ObjectState<Task[]>;
 }
 const CompleteButton = (props: CompleteButtonProps): JSX.Element => {
+  const [disabled, setDisabled] = useState(false);
+
   return (
     <button
-      className="flex w-full flex-col items-center justify-center rounded-md border-2 border-gray-100 bg-white px-10 py-3 hover:bg-gray-50"
+      disabled={disabled}
+      className="flex w-full flex-col items-center justify-center rounded-md border-2 border-gray-100 bg-white px-10 py-3 hover:bg-gray-50 disabled:opacity-50"
       onClick={async () => {
+        setDisabled(true);
         let success: boolean = await setTaskToCompleted(
           props.user,
           props.task.id,
         );
+        setDisabled(false);
+
         if (!success) return;
 
         // add the task to the completed tasks
@@ -160,7 +178,7 @@ const CompleteButton = (props: CompleteButtonProps): JSX.Element => {
         props.tasks.set(newTasks);
       }}
     >
-      <CheckmarkSVG />
+      {disabled ? <LoadingRelative className="h-5 w-5" /> : <CheckmarkSVG />}
     </button>
   );
 };
