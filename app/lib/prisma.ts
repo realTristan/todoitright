@@ -107,7 +107,7 @@ export class Prisma extends PrismaClient {
     const task: Task = await Prisma.update(
       "Task",
       { id, userAccessToken }, // Find the task with the id and access token
-      { value }, // Update the value of the task
+      { id, value }, // Update the value of the task and set the new id to the old one (id is auto incremented)
     );
 
     return task;
