@@ -1,29 +1,3 @@
-# todoitright ![Stars](https://img.shields.io/github/stars/realTristan/todoitright?color=brightgreen) ![Watchers](https://img.shields.io/github/watchers/realTristan/todoitright?label=Watchers)
-<img width="1033" alt="Screenshot 2023-08-24 at 10 07 28 AM" src="https://github.com/realTristan/todoitright/assets/75189508/c71ee101-047d-4752-bdf8-cced50e9e5a7">
-
-# Stack
-- [X] Nextjs (React)
-- [X] Typescript
-- [X] Tailwindcss
-- [X] Google Login
-- [X] Supabase with Prisma (Postgres)
-- [X] Vercel
-
-# Features
-- [X] Login / Logout
-- [X] Create new task
-- [X] Delete task
-- [X] Complete a task
-- [X] Edit a task
-- [X] Tasks for each user
-
-# Lines of code
-<img width="342" alt="Screenshot 2023-08-24 at 10 23 48 AM" src="https://github.com/realTristan/todoitright/assets/75189508/1b5a4911-e761-4738-be7c-2ae833b5f5ed">
-
-# Terminal Commands
-Migration: npx prisma migrate dev --name init
-
-# License
 MIT License
 
 Copyright (c) 2023 Tristan Simpson
