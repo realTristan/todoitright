@@ -7,12 +7,6 @@ export interface Task {
   value: string;
 }
 
-export interface List {
-  id: number;
-  name: string;
-  tasks: Task[];
-}
-
 export interface User {
   email: string | null;
   image: string | null;

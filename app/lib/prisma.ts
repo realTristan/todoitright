@@ -1,6 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { List, Task } from "./types";
-import { COMPLETED_LIST_ID, MAIN_LIST_ID } from "./constants";
+import { Task, User } from "./types";
 
 export class Prisma extends PrismaClient {
   constructor() {
@@ -82,128 +81,117 @@ export class Prisma extends PrismaClient {
   };
 
   /**
-   * Gets all tasks in a list
-   * @param id The id of the list to get tasks from
-   * @returns All tasks in the list with the given id
+   * Verifies that an access token is valid for a user
+   * @param email The email of the user to verify the access token for
+   * @param accessToken The access token to verify
+   * @returns Whether or not the access token is valid for the user
    */
-  public static readonly getlistTasks = async (id: number): Promise<Task[]> =>
-    await Prisma.findMany("Task", { listId: id });
+  public static readonly isValidAccessToken = async (
+    email: string,
+    accessToken: string,
+  ): Promise<boolean> => {
+    const user: User | null = await Prisma.findOne("User", { email });
+    if (!user) return false;
 
-  /**
-   * Gets a list by id
-   * @param id The id of the list to get
-   * @returns The list with the given id, or null if it doesn't exist
-   */
-  public static readonly getList = async (id: number): Promise<List | null> => {
-    const list: List | null = await Prisma.findOne("List", { id });
-    if (!list) return null;
-
-    list.tasks = await Prisma.getlistTasks(id);
-    return list;
+    return user.accessToken === accessToken;
   };
 
   /**
-   * Gets the main list
-   * @returns The main list
-   */
-  public static readonly getMainList = async (): Promise<List | null> =>
-    await Prisma.getList(MAIN_LIST_ID);
-
-  /**
-   * Gets the completed list
-   * @returns The completed list
-   */
-  public static readonly getCompletedList = async (): Promise<List | null> =>
-    await Prisma.getList(COMPLETED_LIST_ID);
-
-  /**
-   * Creates a list
-   * @param id The id of the list to create
-   * @param name The name of the list to create
-   * @returns The created list
-   */
-  public static readonly createList = async (
-    id: number,
-    name: string,
-  ): Promise<List> =>
-    (await Prisma.create("List", {
-      id,
-      name,
-      tasks: { create: [{ value: "Task 1" }, { value: "Task 2" }] },
-    })) as List;
-
-  /**
-   * Deletes a list
-   * @param id The id of the list to delete
-   * @returns The deleted list
-   */
-  public static readonly deleteList = async (id: number): Promise<List> =>
-    (await Prisma.delete("List", { id })) as List;
-
-  /**
    * Updates a task in the provided list
-   * @param oldTask The old task to update
-   * @param newTask The new task to update
-   * @param list The list to update the task in
+   * @param id The id of the old task to update
+   * @param value The new value of the task
+   * @param userAccessToken The access token of the user to update the task for
    * @returns The updated list
    */
-  public static readonly updateTaskInList = async (
-    taskId: number,
-    newTask: Task,
-    listId: number,
+  public static readonly updateTask = async (
+    id: number,
+    value: string,
+    userAccessToken: string,
   ): Promise<any> => {
-    return await Prisma.update(
-      "List",
-      { id: listId },
-      {
-        tasks: {
-          update: {
-            where: { id: taskId },
-            data: newTask,
-          },
-        },
-      },
-    );
+    const newTask: Task = { id, value };
+
+    return (await Prisma.update(
+      "Task",
+      { id, userAccessToken },
+      newTask,
+    )) as Task;
   };
 
   /**
    * Removes a task from the provided list
-   * @param task The task to remove
-   * @param list The list to remove the task from
+   * @param userAccessToken The access token of the user to remove the task from
    * @returns The updated list
    */
-  public static readonly createTask = async (listId: number): Promise<Task> =>
-    (await Prisma.create("Task", { listId, value: "None" })) as Task;
+  public static readonly createTask = async (
+    userAccessToken: string,
+  ): Promise<Task> => {
+    return (await Prisma.create("Task", {
+      value: "What to do? eh?",
+      userAccessToken,
+      completed: false,
+    })) as Task;
+  };
 
   /**
    * Deletes a task
    * @param id The id of the task to delete
-   * @param listId The id of the list to delete the task from
+   * @param userAccessToken The access token of the user to delete the task from
    * @returns The deleted task
    */
   public static readonly deleteTask = async (
     id: number,
-    listId: number,
-  ): Promise<Task> => (await Prisma.delete("Task", { id, listId })) as Task;
+    userAccessToken: string,
+  ): Promise<Task> => {
+    return (await Prisma.delete("Task", {
+      id,
+      userAccessToken,
+    })) as Task;
+  };
 
   /**
-   * Gets a task by id
-   * @param id The id of the task to get
-   * @returns The task with the given id, or null if it doesn't exist
+   * Creates a list
+   * @param id The id of the list to create
+   * @param userAccessToken The access token of the user to create the list for
+   * @returns The created list
    */
-  public static readonly getTask = async (id: number): Promise<Task | null> =>
-    await Prisma.findOne("Task", { id });
-
-  /**
-   * Moves a task to a different list
-   * @param id The id of the task to move
-   * @param listId The id of the list to move the task to
-   * @returns The moved task
-   */
-  public static readonly moveTask = async (
+  public static readonly setTaskToCompleted = async (
     id: number,
-    listId: number,
-  ): Promise<Task> => (await Prisma.update("Task", { id }, { listId })) as Task;
+    userAccessToken: string,
+  ): Promise<Task> => {
+    return (await Prisma.update(
+      "Task",
+      { id, userAccessToken },
+      { completed: true },
+    )) as Task;
+  };
+
+  /**
+   * Gets the completed tasks for a user
+   * @param accessToken The access token of the user to get the completed tasks for
+   * @returns The completed tasks for the user
+   */
+  public static readonly getCompletedTasks = async (
+    accessToken: string,
+  ): Promise<Task[]> => {
+    return await Prisma.findMany("Task", {
+      userAccessToken: accessToken,
+      completed: true,
+    });
+  };
+
+  /**
+   * Gets the tasks for a user
+   * @param accessToken The access token of the user to get the tasks for
+   * @returns The tasks for the user
+   */
+  public static readonly getTasks = async (
+    accessToken: string,
+  ): Promise<Task[]> => {
+    return await Prisma.findMany("Task", {
+      userAccessToken: accessToken,
+      completed: false,
+    });
+  };
 }
 
 // create a global prisma instance
@@ -211,28 +199,3 @@ const global = globalThis as any;
 if (!global.prisma) {
   global.prisma = new Prisma();
 }
-
-// if no list, create one
-/*
-Prisma.getMainList().then((list) => {
-  if (!list) {
-    Prisma.create("List", {
-      name: "Tasks",
-      tasks: {
-        create: [{ value: "Task 1" }, { value: "Task 2" }, { value: "Task 3" }],
-      },
-    });
-  }
-});
-
-Prisma.getCompletedList().then((list) => {
-  if (!list) {
-    Prisma.create("List", {
-      name: "Completed",
-      tasks: {
-        create: [{ value: "Task 4" }],
-      },
-    });
-  }
-});
-*/

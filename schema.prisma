@@ -8,26 +8,9 @@ generator client {
   provider = "prisma-client-js"
 }
 
-// model User {
-//   id          Int    @id @default(autoincrement())
-//   email       String @unique
-//   accessToken String
-//   lists       List[]
-// }
-
-model List {
-  id    Int    @id @default(autoincrement())
-  name  String
-  tasks Task[]
-
-  // User   User? @relation(fields: [userId], references: [id])
-  // userId Int?
-}
-
 model Task {
-  id    Int    @id @default(autoincrement())
-  value String
-
-  list   List @relation(fields: [listId], references: [id])
-  listId Int
+  id              Int     @id @default(autoincrement())
+  value           String
+  completed       Boolean
+  userAccessToken String?
 }

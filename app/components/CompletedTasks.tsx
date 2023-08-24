@@ -2,26 +2,28 @@
 
 import { useState } from "react";
 
-import { Task, List } from "@/app/lib/types";
+import { Task, User } from "@/app/lib/types";
 import { ObjectState } from "@/app/lib/state";
 import { CrossSVG } from "@/app/components/Svgs";
-import { deleteTaskFromDatabase, removeTaskFromList } from "@/app/lib/utils";
+import { deleteTask } from "@/app/utils/api";
 
 interface CompletedProps {
-  completed: ObjectState<List>;
+  user: User;
+  completed: ObjectState<Task[]>;
 }
-export default function Completed(props: CompletedProps): JSX.Element {
+export default function CompletedTasks(props: CompletedProps): JSX.Element {
   return (
     <div className="flex flex-col rounded-md border-2 border-dotted p-10">
       <h2 className="mb-4 text-2xl font-bold">
         Completed{" "}
         <mark className="bg-transparent font-normal">
-          ({props.completed.value.tasks.length})
+          ({props.completed.value.length})
         </mark>
       </h2>
       <ul className="flex flex-wrap gap-6">
-        {props.completed.value.tasks.map((task: any) => (
+        {props.completed.value.map((task: any) => (
           <CompletedTask
+            user={props.user}
             task={task}
             key={Math.random()}
             completed={props.completed}
@@ -33,8 +35,9 @@ export default function Completed(props: CompletedProps): JSX.Element {
 }
 
 interface CompletedTaskProps {
+  user: User;
   task: Task;
-  completed: ObjectState<List>;
+  completed: ObjectState<Task[]>;
 }
 const CompletedTask = (props: CompletedTaskProps): JSX.Element => {
   const [confirm, setConfirm] = useState(false);
@@ -43,13 +46,13 @@ const CompletedTask = (props: CompletedTaskProps): JSX.Element => {
     return (
       <button
         onClick={async () => {
-          let success: boolean = await deleteTaskFromDatabase(
-            props.task.id,
-            props.completed.value.id,
-          );
+          let success: boolean = await deleteTask(props.user, props.task.id);
           if (!success) return;
 
-          const newList = removeTaskFromList(props.task, props.completed.value);
+          // remove the task from the list
+          const newList = props.completed.value.filter(
+            (task) => task.id !== props.task.id,
+          );
           props.completed.set(newList);
         }}
         className="flex h-full w-full flex-col items-center justify-center rounded-md border-2 border-gray-100 bg-white px-14 py-3 text-center hover:bg-gray-50"

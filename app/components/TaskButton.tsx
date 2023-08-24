@@ -1,21 +1,18 @@
 "use client";
 
-import {
-  removeTaskFromList,
-  updateTaskInList,
-  deleteTaskFromDatabase,
-} from "@/app/lib/utils";
-
 import { ObjectState } from "@/app/lib/state";
-import { Task, List } from "@/app/lib/types";
+import { Task, User } from "@/app/lib/types";
+import { deleteTask, updateTask } from "@/app/utils/api";
 
 import { useState } from "react";
 import { CheckmarkSVG } from "@/app/components/Svgs";
+import { generateAuthorization } from "../lib/auth";
 
 interface TaskButtonProps {
+  user: User;
   task: Task;
-  list: ObjectState<List>;
-  completed: ObjectState<List>;
+  tasks: ObjectState<Task[]>;
+  completed: ObjectState<Task[]>;
 }
 export default function TaskButton(props: TaskButtonProps): JSX.Element {
   const [editing, setEditing] = useState(false);
@@ -34,17 +31,23 @@ export default function TaskButton(props: TaskButtonProps): JSX.Element {
           }
 
           let success: boolean = await updateTask(
+            props.user,
             props.task.id,
             value,
-            props.list.value.id,
           );
           if (!success) return;
 
           const oldTask = props.task; // store the old task
           const newTask = { ...props.task, value }; // just update the value
-          const newList = updateTaskInList(oldTask, newTask, props.list.value);
 
-          props.list.set(newList);
+          // replace the old task with the new task
+          const newTasks = props.tasks.value.map((task) => {
+            if (task.id === oldTask.id) {
+              return newTask;
+            }
+            return task;
+          });
+          props.tasks.set(newTasks);
         }}
         onChange={(e) => setValue(e.target.value)}
         defaultValue={props.task.value}
@@ -55,7 +58,8 @@ export default function TaskButton(props: TaskButtonProps): JSX.Element {
       {!editing && !confirm && (
         <div className="mt-2 flex flex-row gap-2">
           <CompleteButton
-            list={props.list}
+            user={props.user}
+            tasks={props.tasks}
             task={props.task}
             completed={props.completed}
           />
@@ -64,27 +68,17 @@ export default function TaskButton(props: TaskButtonProps): JSX.Element {
       )}
       {!editing && confirm && (
         <div className="mt-2 flex flex-row gap-2">
-          <ConfirmButton list={props.list} task={props.task} />
+          <ConfirmButton
+            user={props.user}
+            tasks={props.tasks}
+            task={props.task}
+          />
           <CancelButton onClick={() => setConfirm(false)} />
         </div>
       )}
     </div>
   );
 }
-
-const updateTask = async (
-  task_id: number,
-  value: string,
-  list_id: number,
-): Promise<boolean> => {
-  return await fetch("/api/list/tasks", {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ task_id, value, list_id }),
-  }).then((res) => res.ok);
-};
 
 interface CancelButtonProps {
   onClick: Function;
@@ -115,21 +109,22 @@ const DeleteButton = (props: DeleteButtonProps): JSX.Element => {
 };
 
 interface ConfirmButtonProps {
-  list: ObjectState<List>;
+  user: User;
+  tasks: ObjectState<Task[]>;
   task: Task;
 }
 const ConfirmButton = (props: ConfirmButtonProps): JSX.Element => {
   return (
     <button
       onClick={async () => {
-        let success: boolean = await deleteTaskFromDatabase(
-          props.task.id,
-          props.list.value.id,
-        );
+        let success: boolean = await deleteTask(props.user, props.task.id);
         if (!success) return;
 
-        const newList: List = removeTaskFromList(props.task, props.list.value);
-        props.list.set(newList);
+        const newTasks: Task[] = props.tasks.value.filter(
+          (task) => task.id !== props.task.id,
+        );
+
+        props.tasks.set(newTasks);
       }}
       className="flex flex-col items-center justify-center rounded-md border-2 border-gray-100 bg-white px-10 py-3 hover:bg-gray-50"
     >
@@ -139,22 +134,30 @@ const ConfirmButton = (props: ConfirmButtonProps): JSX.Element => {
 };
 
 interface CompleteButtonProps {
+  user: User;
   task: Task;
-  list: ObjectState<List>;
-  completed: ObjectState<List>;
+  tasks: ObjectState<Task[]>;
+  completed: ObjectState<Task[]>;
 }
 const CompleteButton = (props: CompleteButtonProps): JSX.Element => {
   return (
     <button
       className="flex w-full flex-col items-center justify-center rounded-md border-2 border-gray-100 bg-white px-10 py-3 hover:bg-gray-50"
       onClick={async () => {
-        let success: boolean = await moveToCompleted(props.task.id);
+        let success: boolean = await setTaskToCompleted(
+          props.user,
+          props.task.id,
+        );
         if (!success) return;
 
-        addTaskToCompleted(props.task, props.completed);
+        // add the task to the completed list
+        props.completed.set([...props.completed.value, props.task]);
 
-        const newList = removeTaskFromList(props.task, props.list.value);
-        props.list.set(newList);
+        // remove the task from the main list
+        const newTasks = props.tasks.value.filter(
+          (task) => task.id !== props.task.id,
+        );
+        props.tasks.set(newTasks);
       }}
     >
       <CheckmarkSVG />
@@ -162,20 +165,21 @@ const CompleteButton = (props: CompleteButtonProps): JSX.Element => {
   );
 };
 
-// by database
-const moveToCompleted = async (task_id: number): Promise<boolean> => {
-  return await fetch("/api/list/completed", {
+const setTaskToCompleted = async (
+  user: User,
+  task_id: number,
+): Promise<boolean> => {
+  const authorization = await generateAuthorization(
+    user.accessToken,
+    user.email,
+  );
+
+  return await fetch("/api/user/tasks/completed", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      authorization,
     },
     body: JSON.stringify({ task_id }),
   }).then((res) => res.ok);
-};
-
-const addTaskToCompleted = (task: Task, completed: ObjectState<List>): void => {
-  completed.set({
-    ...completed.value,
-    tasks: [...completed.value.tasks, task],
-  });
 };

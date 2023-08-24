@@ -2,15 +2,15 @@
 "use client";
 
 import { ObjectState } from "@/app/lib/state";
-import { List } from "@/app/lib/types";
-import { EMPTY_LIST } from "./lib/constants";
 
 import LoadingCenter from "@/app/components/Loading";
-import TaskButton from "@/app/components/TaskButton";
-import Completed from "@/app/components/Completed";
+import CompletedTasks from "@/app/components/CompletedTasks";
+import MainTasks from "@/app/components/MainTasks";
 import SideMenu from "@/app/components/SideMenu";
-import CreateTaskButton from "@/app/components/CreateTaskButton";
 import { SessionProvider } from "@/app/components/Providers";
+
+import { getCompletedTasks, getMainTasks } from "@/app/utils/api";
+import { Task } from "@/app/lib/types";
 
 import { useSession } from "next-auth/react";
 import { signIn } from "next-auth/react";
@@ -26,8 +26,8 @@ export default function Home(): JSX.Element {
 
 const Wrapped = (): JSX.Element => {
   const { data: session, status } = useSession();
-  const completed = new ObjectState<List>(EMPTY_LIST);
-  const main = new ObjectState<List>(EMPTY_LIST);
+  const completed = new ObjectState<Task[]>([]);
+  const main = new ObjectState<Task[]>([]);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -35,13 +35,12 @@ const Wrapped = (): JSX.Element => {
     }
 
     if (status === "authenticated") {
-      fetch("/api/list/main")
-        .then((res) => res.json())
-        .then((res) => main.set(res));
-
-      fetch("/api/list/completed")
-        .then((res) => res.json())
-        .then((res) => completed.set(res));
+      getMainTasks(session.user).then((res: Response) => {
+        if (res.ok) res.json().then((json) => main.set(json));
+      });
+      getCompletedTasks(session.user).then((res: Response) => {
+        if (res.ok) res.json().then((json) => main.set(json));
+      });
     }
   }, [status]);
 
@@ -52,30 +51,8 @@ const Wrapped = (): JSX.Element => {
     <main className="flex min-h-screen flex-col rounded-md">
       <SideMenu user={session.user} />
       <div className="flex flex-col p-16 md:ml-64">
-        <div
-          key={Math.random()}
-          className="mb-8 flex flex-col rounded-md border-2 border-dotted p-10"
-        >
-          <h2 className="mb-4 text-2xl font-bold">
-            {main.value.name}{" "}
-            <mark className="bg-transparent font-normal">
-              ({main.value.tasks.length})
-            </mark>
-          </h2>
-          <ul className="flex flex-wrap gap-6">
-            <CreateTaskButton list={main} />
-            {main.value.tasks.map((task: any) => (
-              <TaskButton
-                list={main}
-                task={task}
-                key={Math.random()}
-                completed={completed}
-              />
-            ))}
-          </ul>
-        </div>
-
-        <Completed completed={completed} />
+        <MainTasks main={main} completed={completed} user={session.user} />
+        <CompletedTasks completed={completed} user={session.user} />
       </div>
     </main>
   );

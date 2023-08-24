@@ -20,3 +20,6 @@
 - [ ] Tasks for each user
 - [ ] Create new list
 - [ ] Delete list
+
+# Terminal Commands
+Migration: npx prisma migrate dev --name init
