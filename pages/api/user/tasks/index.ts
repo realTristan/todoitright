@@ -58,6 +58,9 @@ interface HandlerParams {
  */
 const handleGet = async ({ res, accessToken }: HandlerParams) => {
   const tasks = await Prisma.getTasks(accessToken);
+  if (!tasks) {
+    return res.status(400).json({ message: "Error" });
+  }
 
   res.status(200).json({ message: "Success", result: tasks });
 };
@@ -74,6 +77,9 @@ const handlePost = async ({ res, accessToken }: HandlerParams) => {
   }
 
   const task = await Prisma.createTask(accessToken);
+  if (!task) {
+    return res.status(400).json({ message: "Error" });
+  }
   res.status(200).json({ message: "Success", result: task });
 };
 
@@ -90,6 +96,9 @@ const handlePut = async ({ req, res, accessToken }: HandlerParams) => {
 
   const taskId: number = parseInt(task_id as string);
   const task = await Prisma.updateTask(taskId, value, accessToken);
+  if (!task) {
+    return res.status(400).json({ message: "Error" });
+  }
 
   res.status(200).json({ message: "Success", result: task });
 };
@@ -107,6 +116,9 @@ const handleDelete = async ({ req, res, accessToken }: HandlerParams) => {
 
   const taskId: number = parseInt(task_id as string);
   const task = await Prisma.deleteTask(taskId, accessToken);
+  if (!task) {
+    return res.status(400).json({ message: "Error" });
+  }
 
   res.status(200).json({ message: "Success", result: task });
 };

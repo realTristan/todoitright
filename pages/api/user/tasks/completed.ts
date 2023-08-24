@@ -40,6 +40,10 @@ export default async function handler(
  */
 const handleGet = async (res: NextApiResponse, accessToken: string) => {
   const tasks = await Prisma.getCompletedTasks(accessToken);
+  if (!tasks) {
+    return res.status(400).json({ message: "Error" });
+  }
+
   res.status(200).json({ message: "Success", result: tasks });
 };
 
@@ -67,5 +71,8 @@ const handlePost = async (
 
   const taskId: number = parseInt(task_id as string);
   const task = await Prisma.setTaskToCompleted(taskId, accessToken);
+  if (!task) {
+    return res.status(400).json({ message: "Error" });
+  }
   res.status(200).json({ message: "Success", result: task });
 };
