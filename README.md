@@ -2,19 +2,18 @@
 <img width="1033" alt="Screenshot 2023-08-24 at 10 07 28 AM" src="https://github.com/realTristan/todoitright/assets/75189508/c71ee101-047d-4752-bdf8-cced50e9e5a7">
 
 # Synopsis
-A simple todo app built with Nextjs, Typescript, Tailwindcss, Google Login, Supabase with Prisma (Postgres) and Vercel. I wanted to build a simple todo app to learn more about Supabase and Prisma, as well as how to use it in NextJS and deploy it to Vercel.
+A simple to-do app built with Nextjs, Typescript, Tailwind CSS, Google Auth, and Supabase with Prisma (Postgres). I wanted to build a simple to-do app to learn more about Supabase and Prisma and how to use it in NextJS and deploy it to Vercel.
 
 # Stack
 - [X] Nextjs (React)
 - [X] Typescript
 - [X] Tailwindcss
-- [X] Google Login
+- [X] Google Auth
 - [X] Supabase with Prisma (Postgres)
-- [X] Vercel
 
 # Features
 - [X] Login / Logout
-- [X] Create new task
+- [X] Create a new task
 - [X] Delete task
 - [X] Complete a task
 - [X] Edit a task
@@ -24,7 +23,7 @@ A simple todo app built with Nextjs, Typescript, Tailwindcss, Google Login, Supa
 <img width="342" alt="Screenshot 2023-08-24 at 10 23 48 AM" src="https://github.com/realTristan/todoitright/assets/75189508/1b5a4911-e761-4738-be7c-2ae833b5f5ed">
 
 # Terminal Commands
-Migration: npx prisma migrate dev --name init
+Migration: `npx prisma migrate dev --name init`
 
 # License
 MIT License
